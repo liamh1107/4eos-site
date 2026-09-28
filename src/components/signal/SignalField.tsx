@@ -14,7 +14,15 @@ const DETECT_COLOR = new THREE.Color("#e23b2c");
 const _ndc = new THREE.Vector3();
 const _dir = new THREE.Vector3();
 
-function Points({ count, still }: { count: number; still: boolean }) {
+function Points({
+  count,
+  still,
+  lite,
+}: {
+  count: number;
+  still: boolean;
+  lite: boolean;
+}) {
   const material = useRef<THREE.ShaderMaterial>(null);
   const { invalidate } = useThree();
 
@@ -54,11 +62,12 @@ function Points({ count, still }: { count: number; still: boolean }) {
       uGlowScale: { value: 1 },
       uFocus: { value: -1 },
       uZoom: { value: 0 },
+      uLite: { value: lite ? 1 : 0 },
       uBase: { value: BASE_COLOR },
       uAccent: { value: ACCENT_COLOR },
       uDetect: { value: DETECT_COLOR },
     }),
-    [],
+    [lite],
   );
 
   useEffect(() => {
@@ -84,11 +93,6 @@ function Points({ count, still }: { count: number; still: boolean }) {
     const mouseStep = still ? 1 : 1 - Math.pow(0.0008, Math.min(delta, 0.05));
     signal.mouseRX += (signal.mouseX - signal.mouseRX) * mouseStep;
     signal.mouseRY += (signal.mouseY - signal.mouseRY) * mouseStep;
-
-    signal.zoomR += (signal.zoom - signal.zoomR) * step;
-    if (Math.abs(signal.zoom - signal.zoomR) < 0.0005) {
-      signal.zoomR = signal.zoom;
-    }
 
     u.uPhase.value = signal.rendered;
     u.uIntensity.value = signal.intensity;
@@ -129,17 +133,27 @@ function Points({ count, still }: { count: number; still: boolean }) {
   );
 }
 
-function CameraRig({ still }: { still: boolean }) {
+function CameraRig({ still, lite }: { still: boolean; lite: boolean }) {
   useFrame((state, delta) => {
-    const step = still ? 1 : 1 - Math.pow(0.0015, Math.min(delta, 0.05));
+    // Lite devices snap the zoom. A slow GPU makes a multi-frame fly-in
+    // stall, because each closer frame is more expensive than the last.
+    const dt = Math.min(delta, 0.2);
+    const zoomStep = still || lite ? 1 : 1 - Math.pow(0.0004, dt);
+    signal.zoomR += (signal.zoom - signal.zoomR) * zoomStep;
+    if (Math.abs(signal.zoom - signal.zoomR) < 0.0005) {
+      signal.zoomR = signal.zoom;
+    }
+
+    const step = still || lite ? 1 : 1 - Math.pow(0.0015, Math.min(delta, 0.05));
     const z = signal.zoomR;
+    const nearZ = lite ? 13.5 : 9;
     const camX = signal.lookX * z * 0.55;
     const camY = signal.lookY * z * 0.55;
-    const camZ = 20 + (9 - 20) * z;
+    const camZ = 20 + (nearZ - 20) * z;
     const lookX = signal.lookX * z;
     const lookY = signal.lookY * z;
 
-    if (still) {
+    if (still || lite) {
       state.camera.position.set(camX, camY, camZ);
     } else {
       state.camera.position.x += (camX - state.camera.position.x) * step;
@@ -184,6 +198,7 @@ export default function SignalField({ tier }: { tier: DeviceTier }) {
   const count = POINT_BUDGET[tier];
   if (count === 0) return null;
 
+  const lite = tier === "reduced";
   const frameloop = !awake ? "never" : still ? "demand" : "always";
 
   return (
@@ -194,7 +209,7 @@ export default function SignalField({ tier }: { tier: DeviceTier }) {
     >
       <Canvas
         frameloop={frameloop}
-        dpr={[1, 1.5]}
+        dpr={lite ? 1 : [1, 1.5]}
         gl={{
           antialias: false,
           alpha: true,
@@ -202,8 +217,13 @@ export default function SignalField({ tier }: { tier: DeviceTier }) {
         }}
         camera={{ fov: 45, position: [0, 0, 20], near: 0.1, far: 100 }}
       >
-        <CameraRig still={still} />
-        <Points key={`${count}-${still ? "still" : "live"}`} count={count} still={still} />
+        <CameraRig still={still} lite={lite} />
+        <Points
+          key={`${count}-${still ? "still" : "live"}-${lite ? "lite" : "full"}`}
+          count={count}
+          still={still}
+          lite={lite}
+        />
       </Canvas>
     </div>
   );

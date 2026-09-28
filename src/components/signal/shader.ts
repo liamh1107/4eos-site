@@ -22,6 +22,7 @@ uniform vec2 uMouse;
 uniform float uGlowScale;
 uniform float uFocus;
 uniform float uZoom;
+uniform float uLite;
 
 attribute vec2 aUV;
 attribute float aRand;
@@ -33,6 +34,118 @@ attribute float aGold;
 varying float vAlpha;
 varying float vGold;
 varying float vDetect;
+
+float hash21(float x, float y) {
+  float n = fract(x * 12.9898 + y * 78.233);
+  return fract(n * n * 45.233);
+}
+
+vec3 tube(vec3 a, vec3 b, float along, float ang, float rad) {
+  vec3 dir = b - a;
+  float t = clamp(along, 0.0, 1.0);
+  vec3 p = a + dir * t;
+  float dlen = length(dir);
+  vec3 nDir = dlen > 1e-4 ? dir / dlen : vec3(0.0, 1.0, 0.0);
+  vec3 up = abs(nDir.y) > 0.9 ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 1.0, 0.0);
+  vec3 side = cross(nDir, up);
+  float sl = length(side);
+  side = sl > 1e-4 ? side / sl : vec3(1.0, 0.0, 0.0);
+  vec3 bin = cross(nDir, side);
+  return p + (side * cos(ang) + bin * sin(ang)) * rad;
+}
+
+vec3 yaw(vec3 p, float spin) {
+  float c = cos(spin);
+  float s = sin(spin);
+  return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+}
+
+vec3 bowl(float cx, float rimY, float along, float ang, float fill) {
+  float phi = along * 1.5707963;
+  float shell = 0.32 + fill * 0.12;
+  float horiz = cos(phi) * shell;
+  return vec3(cx + cos(ang) * horiz, rimY - sin(phi) * shell, sin(ang) * horiz);
+}
+
+// Local orb inside an industry mark. Twin of industryGlyph() in formations.ts.
+// One assignment and a final return — early returns leave ANGLE with an
+// uninitialised function result (X4000) and the mark disappears.
+vec3 glyph(float k, vec3 seed, float extra) {
+  float along = seed.x;
+  float ang = seed.y * TAU;
+  float fill = sqrt(hash21(seed.x, seed.y));
+  vec3 p = vec3(0.0);
+
+  if (k < 0.5) {
+    p = bowl(extra < 0.81 ? -0.66 : 0.66, 0.0, along, ang, fill);
+    if (extra < 0.1) p = tube(vec3(0.0, -1.08, 0.0), vec3(0.0, -0.9, 0.0), along, ang, 0.1 + fill * 0.22);
+    else if (extra < 0.3) p = tube(vec3(0.0, -0.9, 0.0), vec3(0.0, 0.5, 0.0), along, ang, fill * 0.13);
+    else if (extra < 0.48) p = tube(vec3(-0.92, 0.5, 0.0), vec3(0.92, 0.5, 0.0), along, ang, fill * 0.11);
+    else if (extra < 0.55) p = tube(vec3(-0.66, 0.5, 0.0), vec3(-0.66, 0.02, 0.0), along, ang, fill * 0.05);
+    else if (extra < 0.62) p = tube(vec3(0.66, 0.5, 0.0), vec3(0.66, 0.02, 0.0), along, ang, fill * 0.05);
+  } else if (k < 1.5) {
+    float phi = along * 1.5707963;
+    float shell = 0.86 + fill * 0.14;
+    float horiz = sin(phi) * shell;
+    p = vec3(cos(ang) * horiz, cos(phi) * shell * 0.88 + 0.12, sin(ang) * horiz);
+    if (extra >= 0.76) {
+      float sweep = 3.14159265 * 1.2;
+      float a = along * sweep;
+      float crook = 0.36;
+      float hx = (1.0 - cos(a)) * crook;
+      float hy = -0.92 - sin(a) * crook;
+      float thick = 0.045 + fill * 0.04;
+      float c = cos(ang);
+      float s = sin(ang);
+      p = vec3(hx + cos(a) * c * thick, hy + sin(a) * c * thick, s * thick);
+    } else if (extra >= 0.55) {
+      p = tube(vec3(0.0, 0.55, 0.0), vec3(0.0, -0.92, 0.0), along, ang, fill * 0.09);
+    }
+  } else if (k < 2.5) {
+    float rad = 0.16 + fill * 0.18;
+    if (extra < 0.5) p = tube(vec3(-0.95, 0.0, 0.0), vec3(0.95, 0.0, 0.0), along, ang, rad);
+    else if (along < 0.5) p = tube(vec3(0.0, -0.95, 0.0), vec3(0.0, -0.32, 0.0), along * 2.0, ang, rad);
+    else p = tube(vec3(0.0, 0.32, 0.0), vec3(0.0, 0.95, 0.0), (along - 0.5) * 2.0, ang, rad);
+  } else if (k < 3.5) {
+    float rr = fill * 0.14;
+    p = vec3(0.7 + cos(ang) * rr, -0.16 - abs(sin(ang)) * rr, (hash21(along, extra) - 0.5) * 0.16);
+    if (extra < 0.32) p = tube(vec3(-0.52, -1.02, 0.0), vec3(-0.52, 0.92, 0.0), along, ang, 0.08 + fill * 0.14);
+    else if (extra < 0.6) p = tube(vec3(-0.52, 0.84, 0.0), vec3(1.05, 0.64, 0.0), along, ang, 0.06 + fill * 0.12);
+    else if (extra < 0.72) p = tube(vec3(-0.52, 0.84, 0.0), vec3(-1.02, 0.72, 0.0), along, ang, 0.06 + fill * 0.12);
+    else if (extra < 0.9) p = tube(vec3(0.7, 0.7, 0.0), vec3(0.7, -0.05, 0.0), along, ang, fill * 0.05);
+  } else if (k < 4.5) {
+    float z = (hash21(seed.x, extra) - 0.5) * 0.62;
+    if (extra < 0.52) {
+      float a = along * TAU;
+      float r = 0.4 + fill * 0.3;
+      p = vec3(cos(a) * r, sin(a) * r, z);
+    } else {
+      float tooth = min(floor(along * 8.0), 7.0);
+      float a = (tooth + 0.5) / 8.0 * TAU;
+      float r = 0.68 + fract(along * 8.0) * 0.4;
+      float w = (hash21(extra, seed.y) - 0.5) * 0.28;
+      p = vec3(cos(a) * r - sin(a) * w, sin(a) * r + cos(a) * w, z);
+    }
+  } else {
+    float bar = min(floor(extra * 3.0), 2.0);
+    float h = 0.62 + bar * 0.48;
+    float jx = (hash21(seed.x, extra) - 0.5) * 0.38;
+    float jz = (hash21(seed.y, extra) - 0.5) * 0.55;
+    p = vec3((bar - 1.0) * 0.78 + jx, -0.72 + along * h, jz);
+  }
+
+  return p;
+}
+
+vec3 halo(vec3 seed) {
+  float hz = (seed.z - 0.34) / 0.66;
+  float az = seed.x * TAU;
+  float cosP = hz * 2.0 - 1.0;
+  float sinP = sqrt(max(0.0, 1.0 - cosP * cosP));
+  // Biased inward so the cloud is dense in the middle and sparse at the rim.
+  float R = 2.5 * pow(seed.y, 0.72);
+  return vec3(cos(az) * sinP * R, cosP * R, sin(az) * sinP * R);
+}
 
 vec3 formation(int s, float t) {
   vec3 seed = position;
@@ -72,18 +185,19 @@ vec3 formation(int s, float t) {
     return vec3(cos(a) * r * 1.8, sin(a) * r, (seed.z - 0.5) * 0.7);
   }
   if (s == 4) {
-    // Industries: six distinct clusters. The scatter is polar rather than
-    // box-shaped, otherwise the clusters read as six literal squares.
-    float k = floor(aRand * 6.0);
-    float a = k / 6.0 * TAU;
+    // Industries: a small mark inside a sphere of orbs. Yaw only while
+    // zoomed into this cluster.
+    float k = min(floor(aRand * 6.0), 5.0);
     float match = uFocus < 0.0 ? 0.0 : (1.0 - step(0.5, abs(k - uFocus)));
-    float ja = seed.x * TAU + t * 0.12 * uZoom * match;
-    float jr = pow(seed.y, 1.5) * 2.3;
-    return vec3(
-      cos(a) * 9.5 + cos(ja) * jr * 1.35,
-      sin(a) * 4.7 + sin(ja) * jr,
-      (seed.z - 0.5) * 1.6
-    );
+    // Skip the mark maths for clusters the zoom has already dropped.
+    if (uZoom > 0.45 && uFocus >= 0.0 && match < 0.5) {
+      return vec3(0.0, -40.0, 0.0);
+    }
+    float a = k / 6.0 * TAU;
+    float extra = fract(aRand * 6.0);
+    vec3 local = seed.z < 0.34 ? glyph(k, seed, extra) * 0.22 : halo(seed);
+    local = yaw(local, t * 0.35 * uZoom * match);
+    return vec3(cos(a) * 9.5 + local.x, sin(a) * 4.7 + local.y, local.z);
   }
   if (s == 5) {
     // Response: radial spokes carrying a travelling pulse. The spokes start
@@ -113,7 +227,7 @@ float density(int s) {
   if (s == 1) return 0.85;
   if (s == 2) return 0.30;
   if (s == 3) return 0.32;
-  if (s == 4) return 0.50;
+  if (s == 4) return 0.40;
   if (s == 5) return 0.20;
   return 0.60;
 }
@@ -216,13 +330,44 @@ void main() {
     vAlpha *= mix(1.0, fade * mix(0.5, 1.6, lane), nearStrategy);
   }
 
+  // Industry cloud glows from its own centre: hot in the middle, a faint
+  // dusting at the rim. The mark is a small bright object inside that glow.
+  float nearIndustries = 1.0 - clamp(abs(ph - 4.0), 0.0, 1.0);
+  float onGlyph = (1.0 - step(0.34, position.z)) * nearIndustries;
+  float onHalo = step(0.34, position.z) * nearIndustries;
+  float core = 0.0;
+  if (nearIndustries > 0.0) {
+    float kk = min(floor(aRand * 6.0), 5.0);
+    float ca = kk / 6.0 * 6.2831853;
+    vec2 ctr = vec2(cos(ca) * 9.5, sin(ca) * 4.7);
+    float rad = length(vec3(pos.x - ctr.x, pos.y - ctr.y, pos.z));
+    core = pow(clamp(1.0 - rad / 2.5, 0.0, 1.0), 1.35);
+  }
+  vAlpha *= mix(1.0, 1.35, onGlyph);
+  vAlpha *= mix(1.0, mix(0.16, 1.85, core), onHalo);
+
+  // Once a zoom is underway, stop rasterising the other five clusters.
+  // That is the expensive part of flying in on a slower GPU.
+  float hide = 0.0;
+  if (nearIndustries > 0.0 && uFocus >= 0.0) {
+    float k = floor(aRand * 6.0);
+    float match = 1.0 - step(0.5, abs(k - uFocus));
+    hide = (1.0 - match) * smoothstep(0.06, 0.28, uZoom);
+  }
+
   // Driven by the contact form: the field tightens as the form completes.
   vAlpha *= mix(1.0, 1.7, uResolve);
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-  float size = mix(0.9, 2.0, aRand) + vGold * 0.7 + beam * 0.9 + glow * 0.85 + vDetect * 0.8;
-  gl_PointSize = size * uPixelRatio * (44.0 / max(-mv.z, 0.001));
-  gl_Position = projectionMatrix * mv;
+  float size = mix(0.9, 2.0, aRand) + vGold * 0.7 + beam * 0.9 + glow * 0.85 + vDetect * 0.8 + onGlyph * 0.45 + onHalo * core * 0.7;
+  float px = size * uPixelRatio * (44.0 / max(-mv.z, 0.001));
+  float cap = mix(18.0, mix(12.0, 7.5, uLite), uZoom);
+  gl_PointSize = min(px, cap) * (1.0 - hide);
+  if (hide > 0.97) {
+    gl_Position = vec4(3.0, 3.0, 0.0, 1.0);
+  } else {
+    gl_Position = projectionMatrix * mv;
+  }
 }
 `;
 

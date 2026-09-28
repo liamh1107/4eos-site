@@ -12,7 +12,7 @@ export const services = [
   {
     slug: "completecare",
     title: "CompleteCare Managed IT",
-    statement: "We take ownership of the environment so your team can stay on the work.",
+    statement: "We run your IT so the team can stay on the work.",
     lede: "Proactive management, continuous monitoring, and live U.S.-based support. Problems are prevented rather than waited for.",
     phase: "ownership" as const,
     points: [
@@ -33,7 +33,7 @@ export const services = [
   {
     slug: "cybersecurity",
     title: "Cybersecurity & Compliance",
-    statement: "Security is not a feature. It is the foundation the rest of the work sits on.",
+    statement: "A layered defense your auditor can follow.",
     lede: "We follow the NIST Cybersecurity Framework for a structured, layered defense, and keep you audit-ready.",
     phase: "security" as const,
     points: [
@@ -75,7 +75,7 @@ export const services = [
   {
     slug: "voip",
     title: "Business VoIP",
-    statement: "More than dial tone. Communication that fits how the team works.",
+    statement: "Phones that fit how the team works.",
     lede: "Business-class VoIP from Midwest VoIP, with full installation, porting, and ongoing support.",
     phase: "response" as const,
     points: [
@@ -96,7 +96,7 @@ export const services = [
   {
     slug: "datacenter",
     title: "Data Center & DR",
-    statement: "A Fort Wayne facility, not a distant cloud you cannot visit.",
+    statement: "A Fort Wayne data center you can visit.",
     lede: "Co-location, disaster recovery, and remote backup in SafeHouse DataCenter. Full or partial rack space, or 4EOS-administered hosted systems.",
     phase: "security" as const,
     points: [
@@ -140,7 +140,7 @@ export const services = [
 export const tiers = [
   {
     name: "Base",
-    statement: "Reliable help desk coverage and fast answers.",
+    statement: "For teams that need reliable help desk coverage and fast answers.",
     points: [
       "Live U.S.-based help desk",
       "Remote support for endpoints",
@@ -150,7 +150,7 @@ export const tiers = [
   },
   {
     name: "Pro",
-    statement: "The entire environment, proactively run.",
+    statement: "For businesses that want the whole environment run for them.",
     points: [
       "Everything in Base",
       "Fully managed servers and network",
@@ -161,7 +161,7 @@ export const tiers = [
   },
   {
     name: "Premium",
-    statement: "IT that drives the business forward.",
+    statement: "For leaders who want IT tied to where the business is going.",
     points: [
       "Everything in Pro",
       "Executive-level IT strategy",
@@ -176,7 +176,7 @@ export const industries = [
   {
     slug: "legal",
     title: "Legal",
-    statement: "Confidentiality is the practice.",
+    statement: "Privileged client data stays protected.",
     lede: "Secure document management, reliable systems during trial prep, and protection for privileged client data.",
     how: [
       "Secure document management",
@@ -191,7 +191,7 @@ export const industries = [
   {
     slug: "insurance",
     title: "Insurance",
-    statement: "The agency stays up when the producers need it.",
+    statement: "Agency systems stay up when the office needs them.",
     lede: "Client data protection, PCI-aligned payment handling, and agency management systems that stay available.",
     how: [
       "Client data protection",
@@ -206,7 +206,7 @@ export const industries = [
   {
     slug: "healthcare",
     title: "Healthcare",
-    statement: "Patient data does not get a second chance.",
+    statement: "Patient records stay up, and stay protected.",
     lede: "HIPAA compliance support, EHR uptime, and safeguards for patient data across every device and connection.",
     how: [
       "HIPAA compliance support",
@@ -221,7 +221,7 @@ export const industries = [
   {
     slug: "construction",
     title: "Construction",
-    statement: "The job site is not a cubicle.",
+    statement: "Secure access for crews on the job site.",
     lede: "Job site connectivity, project deadline pressure, and field teams that need secure access from anywhere.",
     how: [
       "Job site connectivity",
@@ -251,7 +251,7 @@ export const industries = [
   {
     slug: "private-equity",
     title: "Private Equity",
-    statement: "A consistent posture across the holdings.",
+    statement: "One security standard across every company you own.",
     lede: "Technology due diligence for deals, rapid portfolio onboarding, and consistent security across holdings.",
     how: [
       "Technology due diligence for deals",

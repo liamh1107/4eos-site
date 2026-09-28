@@ -15,8 +15,8 @@ export default function ServicesPage() {
     <Page phase="ownership">
       <section className="px-[var(--sheet-inset)] pb-10 pt-[6vh]">
         <p className="micro text-fg-muted">Practice</p>
-        <h1 className="display page-display mt-5 max-w-[16ch]">
-          Six practices. One accountable family.
+        <h1 className="display-wide page-display mt-5 max-w-[22em]">
+          IT, phones, and the data center.
         </h1>
       </section>
       <Breath size="md" />

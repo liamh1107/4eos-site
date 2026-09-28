@@ -70,13 +70,13 @@ function Discovery() {
         <section className="px-[var(--sheet-inset)] py-10 md:py-14">
           <GoldReveal
             as="h2"
-            className="display-wide chapter-display max-w-[18ch]"
-            text="An unmanaged environment is a field of endpoints nobody is watching."
-            marks={["unmanaged", "nobody"]}
+            className="display-wide chapter-display max-w-[22em]"
+            text="We account for every device before we manage it."
+            marks={["every"]}
           />
           <p className="lede mt-6 max-w-[42ch]">
-            We start by seeing what is actually there. Then the field resolves
-            onto a lattice — the same endpoints, finally accounted for.
+            Servers, laptops, and the connections between them. Once they are
+            named, they can be watched.
           </p>
         </section>
       </SignalChapter>
@@ -90,12 +90,20 @@ function Ownership() {
       <Breath size="md" />
       <SignalChapter phase="ownership" id="chapter-ownership">
         <section className="px-[var(--sheet-inset)] py-10 md:py-14">
-          <h2 className="display chapter-display max-w-[16ch]">
-            CompleteCare is not support. It is a system.
-          </h2>
-          <p className="lede mt-5 max-w-[44ch]">
-            Three tiers. The field organises around whichever one the
-            environment needs — Base, Pro, or Premium.
+          <GoldReveal
+            as="h2"
+            className="display-wide chapter-display max-w-[22em]"
+            text="CompleteCare is how your IT gets run."
+            marks={["CompleteCare"]}
+          />
+          <p className="lede mt-5 max-w-[46ch]">
+            More than a help desk. Proactive management, continuous monitoring,
+            and live U.S.-based support, in three levels.
+          </p>
+          <p className="lede mt-4 max-w-[46ch]">
+            Base is the help desk and monitoring. Pro runs the servers, the
+            network, backups, and security. Premium adds a roadmap and
+            quarterly reviews with leadership.
           </p>
           <div className="mt-10">
             <Accordion
@@ -119,6 +127,9 @@ function Ownership() {
               onChange={(i) => setFocus(i)}
             />
           </div>
+          <Link href="/services/completecare" className="micro mt-8 inline-flex text-gold">
+            What CompleteCare includes →
+          </Link>
         </section>
       </SignalChapter>
     </>
@@ -133,13 +144,13 @@ function Security() {
         <section className="px-[var(--sheet-inset)] py-10 md:py-14">
           <GoldReveal
             as="h2"
-            className="display chapter-display max-w-[18ch]"
-            text="A perimeter forms. Threats are absorbed, not just reported."
-            marks={["absorbed"]}
+            className="display-wide chapter-display max-w-[22em]"
+            text="Threats are stopped here, not only reported."
+            marks={["stopped"]}
           />
           <p className="lede mt-6 max-w-[42ch]">
-            NIST Cybersecurity Framework. HIPAA, PCI, and SEC compliance
-            support.
+            Early detection and real-time monitoring, on the NIST Cybersecurity
+            Framework, with support for HIPAA, PCI, and SEC.
           </p>
           <div className="mt-10 max-w-[42ch]">
             <h3 className="display text-[clamp(1.6rem,3vw,2.4rem)]">
@@ -168,8 +179,8 @@ function Industries() {
       <SignalChapter phase="industries" id="chapter-industries">
         <section className="px-[var(--sheet-inset)] py-10 md:py-14">
           <p className="lede max-w-[44ch]">
-            Six practices. The field splits because the work is not generic,
-            and neither is the environment.
+            Six industries we already know. Familiar problems, so fewer
+            surprises.
           </p>
           <ol className="mt-10 divide-y divide-hairline border-y border-hairline">
             {industries.map((ind, i) => (
@@ -204,9 +215,9 @@ function Response() {
         <section className="px-[var(--sheet-inset)] py-10 md:py-14">
           <GoldReveal
             as="h2"
-            className="display chapter-display max-w-[18ch]"
-            text="A pulse travels out. Most issues never reach the inbox."
-            marks={["never"]}
+            className="display-wide chapter-display max-w-[22em]"
+            text="Most issues are fixed before they reach you."
+            marks={["before"]}
           />
           <p className="lede mt-6 max-w-[42ch]">
             Continuous monitoring. Live U.S.-based support. Eyes On Site
@@ -233,7 +244,7 @@ function Strategy() {
       <Breath size="md" />
       <SignalChapter phase="strategy" id="chapter-strategy">
       <section className="px-[var(--sheet-inset)] pb-12">
-        <h2 className="display chapter-display max-w-[16ch]">
+        <h2 className="display-wide chapter-display max-w-[22em]">
           A partner, <span className="text-gold">not a vendor.</span>
         </h2>
         <p className="lede mt-6 max-w-[42ch]">

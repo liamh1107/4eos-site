@@ -1,5 +1,6 @@
 import {
   buildSeeds,
+  clusterCenter,
   formation,
   PHASE_CAPTION,
   PHASE_INDEX,
@@ -29,7 +30,7 @@ type PosterProps = {
 
 export function SignalPoster({
   phase,
-  points = 320,
+  points = phase === "industries" ? 1400 : 320,
   className = "",
 }: PosterProps) {
   const index = PHASE_INDEX[phase];
@@ -51,10 +52,19 @@ export function SignalPoster({
     // The poster is not additive and carries two orders of magnitude fewer
     // points, so it is drawn larger and more opaque than the live field to
     // land at the same apparent density.
-    const r = Math.round(Math.max(0.8, (1.4 + s.rand * 1.6) * (20 / depth)) * 10) / 10;
+    let r = Math.round(Math.max(0.8, (1.4 + s.rand * 1.6) * (20 / depth)) * 10) / 10;
 
     const gold = s.gold > 0.955;
-    const o = Math.round((gold ? 0.7 : 0.26 + s.rand * 0.18) * 100) / 100;
+    let o = Math.round((gold ? 0.7 : 0.26 + s.rand * 0.18) * 100) / 100;
+    if (phase === "industries") {
+      const k = Math.min(5, Math.floor(s.rand * 6));
+      const [cx, cy] = clusterCenter(k);
+      const rad = Math.hypot(x - cx, y - cy, z);
+      const fall = Math.pow(Math.max(0, 1 - rad / 2.5), 1.35);
+      const glyph = s.seed[2] < 0.34;
+      o = glyph ? 0.85 : Math.round((0.06 + fall * 0.72) * 100) / 100;
+      r = Math.round(r * (glyph ? 0.7 : 0.55 + fall * 0.9) * 10) / 10;
+    }
     dots.push(
       `<circle cx="${px}" cy="${py}" r="${r}" fill="${gold ? "#F5B700" : "#4F86B4"}" opacity="${o}"/>`,
     );

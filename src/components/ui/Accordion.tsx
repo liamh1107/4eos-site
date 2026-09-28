@@ -47,13 +47,20 @@ export function Accordion({
                   setOpen(i);
                   onChange?.(i);
                 }}
-                className="flex w-full items-baseline gap-[3vw] py-5 text-left transition-colors hover:text-gold"
+                className="flex w-full items-start gap-[3vw] py-5 text-left transition-colors hover:text-gold"
               >
-                <span className="micro w-8 shrink-0">
+                <span className="micro w-8 shrink-0 pt-2">
                   {item.index ?? String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="display text-[clamp(1.4rem,2.8vw,2.2rem)]">
-                  {item.title}
+                <span className="min-w-0">
+                  <span className="display block text-[clamp(1.4rem,2.8vw,2.2rem)]">
+                    {item.title}
+                  </span>
+                  {item.statement ? (
+                    <span className="mt-2 block max-w-[48ch] text-[15px] leading-snug tracking-tight text-fg-muted">
+                      {item.statement}
+                    </span>
+                  ) : null}
                 </span>
               </button>
             </h3>
@@ -62,14 +69,9 @@ export function Accordion({
               role="region"
               aria-labelledby={buttonId}
               hidden={!isOpen}
-              className="grid grid-cols-1 gap-8 pb-10 pl-[calc(2rem+3vw)] md:grid-cols-12"
+              className="pb-10 pl-[calc(2rem+3vw)]"
             >
-              {item.statement ? (
-                <p className="lede md:col-span-5">{item.statement}</p>
-              ) : null}
-              <div className={item.statement ? "md:col-span-7" : "md:col-span-12"}>
-                {item.children}
-              </div>
+              {item.children}
             </div>
           </li>
         );

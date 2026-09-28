@@ -15,8 +15,8 @@ export default function IndustriesPage() {
     <Page phase="industries">
       <section className="px-[var(--sheet-inset)] pb-10 pt-[6vh]">
         <p className="micro text-fg-muted">Industries</p>
-        <h1 className="display page-display mt-5 max-w-[16ch]">
-          We have seen your problems before.
+        <h1 className="display-wide page-display mt-5 max-w-[22em]">
+          We have seen these problems before.
         </h1>
       </section>
       <Breath size="md" />

@@ -38,7 +38,7 @@ export function InnerPage({
         {kicker ? (
           <p className={`micro ${backHref ? "mt-6" : ""}`}>{kicker}</p>
         ) : null}
-        <h1 className="display page-display mt-5 max-w-[18ch]">{title}</h1>
+        <h1 className="display-wide page-display mt-5 max-w-[22em]">{title}</h1>
         {lede ? <p className="lede mt-6 max-w-[46ch]">{lede}</p> : null}
       </section>
       {children ? (
