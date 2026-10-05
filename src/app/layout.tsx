@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: site.name,
-    title: `${site.name} — ${site.tagline}`,
+    title: `${site.name} — Modern IT Leadership for Growing Businesses`,
     description: site.description,
     locale: "en_US",
   },
