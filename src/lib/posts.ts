@@ -22,7 +22,7 @@ export function getPosts(): Post[] {
       return {
         slug: file.replace(/\.mdx$/, ""),
         title: String(data.title),
-        date: String(data.date),
+        date: data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date),
         author: String(data.author),
         description: String(data.description),
         body: content,

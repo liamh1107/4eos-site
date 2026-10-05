@@ -16,6 +16,7 @@ type Payload = {
   phone?: string;
   message?: string;
   company_url?: string;
+  topic?: string;
   intent?: "assessment" | "support";
 };
 
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
     `Email: ${email}`,
     body.company ? `Company: ${body.company}` : null,
     body.phone ? `Phone: ${body.phone}` : null,
+    body.topic ? `Topic: ${String(body.topic).slice(0, 80)}` : null,
     "",
     message,
   ]
@@ -66,7 +68,7 @@ export async function POST(request: Request) {
         email,
         company,
         phone,
-        message,
+        message: body.topic ? `[${String(body.topic).slice(0, 80)}] ${message}` : message,
       });
       ticketOk = ticket.ok;
       ticketId = ticket.ticketId;
