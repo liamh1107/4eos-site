@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { InnerPage } from "@/components/layout/InnerPage";
 import { site } from "@/lib/site";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/about", {
   title: "About",
   description:
     "Founded in Fort Wayne in 2002. Largest Dell reseller in Northeast Indiana. Microsoft and Cisco partner.",
-};
+});
 
 const facts = [
   { label: "Founded", value: String(site.founded) },

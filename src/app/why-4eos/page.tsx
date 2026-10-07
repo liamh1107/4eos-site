@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { InnerPage } from "@/components/layout/InnerPage";
 import { values } from "@/lib/content";
 import { site } from "@/lib/site";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/why-4eos", {
   title: "Why 4EOS",
   description:
     "Founded in Fort Wayne in 2002. A partner, not a vendor. Eyes On Site, one family of companies.",
-};
+});
 
 const claims = [
   {

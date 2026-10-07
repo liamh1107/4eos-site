@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticRoutes.map((path) => ({
-      url: `${site.url}${path || "/"}`,
+      url: path ? `${site.url}${path}` : site.url,
       lastModified: now,
     })),
     ...services.map((s) => ({

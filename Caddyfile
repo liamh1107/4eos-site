@@ -1,0 +1,15 @@
+# testsite.4eos.com gets a public certificate and forwards to port 3000.
+# LAN names use a local certificate. HTTP on port 80 is forwarded to HTTPS.
+{
+	email helpdesk@4eos.com
+	default_sni testsite.4eos.com
+}
+
+testsite.4eos.com {
+	reverse_proxy 127.0.0.1:3000
+}
+
+localhost, 127.0.0.1 {
+	tls internal
+	reverse_proxy 127.0.0.1:3000
+}

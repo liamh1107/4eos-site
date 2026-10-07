@@ -5,11 +5,12 @@ import { Sheet } from "@/components/layout/Sheet";
 import { IntakeForm } from "@/components/forms/IntakeForm";
 import { site } from "@/lib/site";
 import { hours } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/support", {
   title: "Support",
   description: `Existing clients: reach the 4EOS help desk. ${site.phone} · ${site.helpdesk}.`,
-};
+});
 
 const channels = [
   {

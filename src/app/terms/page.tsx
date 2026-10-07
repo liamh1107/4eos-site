@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { InnerPage } from "@/components/layout/InnerPage";
 import { LegalSections } from "@/components/legal/LegalSections";
 import { site } from "@/lib/site";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/terms", {
   title: "Terms",
   description: "Terms of use for the 4EOS website. Client work is covered by a signed agreement.",
-};
+});
 
 const updated = "September 26, 2026";
 

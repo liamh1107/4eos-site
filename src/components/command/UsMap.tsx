@@ -67,33 +67,58 @@ export function UsMap({
   const max = Math.max(1, ...states.map((row) => row.count));
   const [hover, setHover] = useState<string | null>(null);
   const live = new Set(liveRegions);
+  const ranked = [...states].sort((a, b) => b.count - a.count);
 
   return (
     <div className="command-map">
-      <svg viewBox="0 0 430 290" role="img" aria-label="United States visits">
+      <svg viewBox="0 0 430 290" role="img" aria-label="United States visits by state">
         {Object.entries(TILES).map(([code, [col, row]]) => {
           const count = counts.get(code) ?? 0;
           const hot = count / max;
           return (
-            <g key={code} onMouseEnter={() => setHover(`${code} · ${count} visits`)} onMouseLeave={() => setHover(null)}>
+            <g
+              key={code}
+              onMouseEnter={() => setHover(`${code} · ${count} ${count === 1 ? "visit" : "visits"}`)}
+              onMouseLeave={() => setHover(null)}
+            >
+              <title>
+                {code}: {count} {count === 1 ? "visit" : "visits"}
+                {live.has(code) ? ", someone is active" : ""}
+              </title>
               <rect
                 x={8 + col * 38}
                 y={8 + row * 34}
                 width="34"
                 height="28"
                 rx="5"
-                fill={count ? `rgba(245, 183, 0, ${0.2 + hot * 0.75})` : "rgba(255,255,255,0.06)"}
-                stroke={live.has(code) ? "#fff" : "transparent"}
+                fill={count ? "var(--color-gold)" : "var(--color-fg)"}
+                fillOpacity={count ? 0.2 + hot * 0.75 : 0.08}
+                stroke={live.has(code) ? "var(--color-bone)" : "transparent"}
                 strokeWidth="1.5"
               />
-              <text x={25 + col * 38} y={26 + row * 34} textAnchor="middle" fontSize="9" fill={count ? "#14120b" : "rgba(255,255,255,0.5)"}>
+              <text
+                x={25 + col * 38}
+                y={26 + row * 34}
+                textAnchor="middle"
+                fontSize="9"
+                fill={count ? "var(--color-ink)" : "var(--color-fg)"}
+                fillOpacity={count ? 1 : 0.55}
+              >
                 {code}
               </text>
             </g>
           );
         })}
       </svg>
-      <p className="command-empty">{hover ?? "Shade is visits. A white edge means someone is active in that state."}</p>
+      <p className="command-empty">{hover ?? "Shade is visits. A bone edge means someone is active in that state."}</p>
+      <ol className="command-state-list">
+        {ranked.map((row) => (
+          <li key={row.label}>
+            <span>{row.label}</span>
+            <b>{row.count}</b>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

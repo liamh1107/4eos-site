@@ -4,12 +4,13 @@ import { BackLink } from "@/components/ui/BackLink";
 import { Breath, Sheet } from "@/components/layout/Sheet";
 import { PhaseLink } from "@/components/ui/PhaseLink";
 import { industries } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/industries", {
   title: "Industries",
   description:
     "Legal, insurance, healthcare, construction, manufacturing, and private equity.",
-};
+});
 
 export default function IndustriesPage() {
   return (

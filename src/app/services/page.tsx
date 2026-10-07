@@ -4,12 +4,13 @@ import { BackLink } from "@/components/ui/BackLink";
 import { Breath, Sheet } from "@/components/layout/Sheet";
 import { PhaseLink } from "@/components/ui/PhaseLink";
 import { services } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/services", {
   title: "Services",
   description:
     "CompleteCare managed IT, cybersecurity, cloud, VoIP, data center, and hardware procurement.",
-};
+});
 
 export default function ServicesPage() {
   return (

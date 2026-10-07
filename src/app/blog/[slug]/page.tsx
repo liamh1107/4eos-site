@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InnerPage } from "@/components/layout/InnerPage";
 import { Mdx } from "@/components/blog/Mdx";
+import { withCanonical } from "@/lib/metadata";
 import { getPost, getPosts } from "@/lib/posts";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
-  return { title: post.title, description: post.description };
+  return withCanonical(`/blog/${post.slug}`, { title: post.title, description: post.description });
 }
 
 export default async function PostPage({ params }: Props) {

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InnerPage } from "@/components/layout/InnerPage";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/secureai", {
   title: "SecureAI",
   description:
     "Sixty-plus AI models on one secure platform. No per-user fees. The data stays yours.",
-};
+});
 
 const plans = [
   { name: "Starter", price: "$500", credits: "100,000 credits monthly" },

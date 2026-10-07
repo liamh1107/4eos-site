@@ -73,6 +73,7 @@
 html {
   background-color: var(--color-ink);
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 /* Lenis owns the scroll position; without this the native smooth
@@ -193,7 +194,10 @@ body {
   color: var(--color-fg-muted);
 }
 
+/* Four short lines, sized like the original hero, so the heading
+   fills the first screen instead of sitting in a band at the bottom. */
 .hero-display {
+  max-width: 100%;
   font-size: clamp(2.2rem, min(10vw, 14.2vh), 8.4rem);
 }
 
@@ -848,12 +852,15 @@ html.signal-live .signal-poster {
   }
 }
 
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4
+   Analytics only. Colors and type stay on the 4EOS tokens. */
 .command-shell {
   position: relative;
   z-index: 2;
   min-height: 100dvh;
-  padding: 6.5rem var(--sheet-inset) 4rem;
-  color: var(--fg);
+  padding: 2rem var(--sheet-inset) 3rem;
+  color: var(--color-fg);
+  overflow-x: clip;
 }
 
 .command-gate {
@@ -864,73 +871,201 @@ html.signal-live .signal-poster {
 }
 
 .command-kicker,
-.command-stat p,
+.command-metric p,
 .command-panel h3 {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
+  font-style: normal;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-gold);
 }
 
-.command-top,
-.command-ranges {
+.command-top {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem 1.5rem;
   align-items: end;
   justify-content: space-between;
 }
 
-.command h1 {
-  font-family: var(--font-archivo), sans-serif;
-  font-size: clamp(2rem, 4vw, 3.4rem);
+.command-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.command-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.command h1,
+.command-login h1,
+.command h2,
+.command h3 {
+  font-family: var(--font-display);
+  font-style: normal;
   font-weight: 500;
   letter-spacing: -0.03em;
 }
 
+.command h1 {
+  margin: 0.15rem 0 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  overflow-wrap: anywhere;
+}
+
 .command-ranges button,
-.command-login button {
-  border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
-  background: rgba(5, 7, 10, 0.45);
+.command-login button,
+.command-signout,
+.command-status button,
+.command-banner button {
+  min-height: 2.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-fg) 25%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 55%, transparent);
   color: inherit;
-  padding: 0.45rem 0.8rem;
-  text-transform: capitalize;
+  padding: 0.45rem 0.85rem;
+  white-space: nowrap;
   cursor: pointer;
+  transition:
+    background-color 160ms var(--ease-out-quint),
+    color 160ms var(--ease-out-quint),
+    border-color 160ms var(--ease-out-quint);
+}
+
+.command-ranges button:hover,
+.command-login button:hover,
+.command-signout:hover,
+.command-status button:hover,
+.command-banner button:hover {
+  border-color: var(--color-gold);
+}
+
+.command-ranges button:active,
+.command-login button:active,
+.command-signout:active,
+.command-status button:active,
+.command-banner button:active {
+  transform: translateY(1px);
+}
+
+.command-ranges button:disabled,
+.command-login button:disabled,
+.command-signout:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.command-ranges button:hover,
+.command-login button:hover,
+.command-signout:hover,
+.command-status button:hover,
+.command-banner button:hover {
+  border-color: var(--color-gold);
+}
+
+.command-ranges button:disabled,
+.command-login button:disabled,
+.command-signout:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .command-ranges button.is-on {
-  color: #14120b;
+  color: var(--color-ink);
   background: var(--color-gold);
+  border-color: var(--color-gold);
 }
 
-.command-grid {
+.command-ranges button.is-on:focus-visible,
+.command-login button:focus-visible,
+.command-signout:focus-visible {
+  outline-color: var(--color-bone);
+}
+
+.command-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
 }
 
-.command-stat,
+.command-metric,
 .command-panel,
-.command-login {
-  background: rgba(5, 7, 10, 0.46);
+.command-login,
+.command-status {
+  min-width: 0;
+  background: color-mix(in srgb, var(--color-ink) 46%, transparent);
   border: 1px solid color-mix(in srgb, white 12%, transparent);
-  border-radius: var(--radius-sheet, 1.25rem);
+  border-radius: var(--radius-sheet);
   padding: 1rem 1.1rem;
   backdrop-filter: blur(16px) saturate(1.1);
 }
 
-.command-stat strong {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 1.6rem;
+.command-metric p {
+  margin: 0;
 }
 
-.command-stat span,
-.command-empty {
-  color: color-mix(in srgb, var(--fg) 70%, transparent);
-  font-size: 0.9rem;
+.command-metric strong {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.command-metric span,
+.command-empty,
+.command-delta {
+  color: color-mix(in srgb, var(--color-fg) 72%, transparent);
+  font-size: 0.85rem;
+}
+
+.command-metric span {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.command-delta[data-dir="up"] {
+  color: var(--color-gold);
+}
+
+.command-status {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+  margin-top: 1.25rem;
+}
+
+.command-status p,
+.command-banner {
+  margin: 0;
+}
+
+.command-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+  border-radius: var(--radius-sheet);
+}
+
+.command-note {
+  margin: 0.75rem 0 0;
+  color: color-mix(in srgb, var(--color-fg) 72%, transparent);
 }
 
 .command-split {
@@ -964,11 +1099,18 @@ html.signal-live .signal-poster {
 .command-paths li,
 .command-funnel li {
   display: grid;
-  grid-template-columns: minmax(5rem, 1fr) 2fr auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto;
   gap: 0.6rem;
   align-items: center;
   margin: 0.35rem 0;
   font-size: 0.92rem;
+}
+
+.command-bars li span,
+.command-feed li strong,
+.command-funnel li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .command-bars i {
@@ -991,6 +1133,11 @@ html.signal-live .signal-poster {
   padding: 0.8rem;
   background: rgba(214, 179, 106, 0.16);
   border-radius: 0.8rem;
+}
+
+.command-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .command table {
@@ -1020,50 +1167,28 @@ html.signal-live .signal-poster {
 
 .command-login h1 {
   margin: 0;
-  font-family: var(--font-archivo), sans-serif;
   font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
 }
 
 .command-login input {
   display: block;
   width: 100%;
   margin-top: 0.3rem;
+  min-height: 2.75rem;
   padding: 0.55rem 0.7rem;
   color: inherit;
-  background: rgba(0, 0, 0, 0.35);
+  background: color-mix(in srgb, var(--color-ink) 55%, transparent);
   border: 1px solid color-mix(in srgb, white 16%, transparent);
 }
 
-.command-hero {
-  display: grid;
-  grid-template-columns: minmax(16rem, 0.9fr) 1.2fr 1fr;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
+.command-login input:disabled {
+  opacity: 0.55;
 }
 
-.command-impact {
-  background: rgba(245, 183, 0, 0.12);
-  border: 1px solid rgba(245, 183, 0, 0.45);
-  border-radius: var(--radius-sheet, 1.25rem);
-  padding: 1.2rem 1.3rem;
+.command-login input[aria-invalid="true"] {
+  border-color: var(--color-gold);
 }
 
-.command-impact strong {
-  display: block;
-  font-size: clamp(2.4rem, 5vw, 4rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-
-.command-impact em {
-  display: block;
-  margin: 0.6rem 0 0.8rem;
-  font-style: normal;
-}
-
-.command-impact ul,
 .command-summary dl,
 .command-panel dl {
   list-style: none;
@@ -1071,7 +1196,6 @@ html.signal-live .signal-poster {
   padding: 0;
 }
 
-.command-impact li,
 .command-summary dl div,
 .command-panel dl div {
   display: flex;
@@ -1116,8 +1240,29 @@ html.signal-live .signal-poster {
 .command-funnel i {
   display: block;
   height: 1.4rem;
-  background: rgba(245, 183, 0, 0.75);
+  background: color-mix(in srgb, var(--color-gold) 75%, transparent);
   border-radius: 0.2rem;
+}
+
+.command-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.command-state-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  list-style: none;
+  margin: 0.85rem 0 0;
+  padding: 0;
+}
+
+.command-state-list li {
+  display: flex;
+  gap: 0.35rem;
+  min-width: 3.25rem;
 }
 
 .command details summary {
@@ -1127,7 +1272,7 @@ html.signal-live .signal-poster {
 
 .command-quiet {
   margin: 0.4rem 0 0;
-  color: color-mix(in srgb, var(--fg) 72%, transparent);
+  color: color-mix(in srgb, var(--color-fg) 72%, transparent);
 }
 
 .command-live,
@@ -1158,9 +1303,17 @@ html.signal-live .signal-poster {
   padding: 0.35rem 0;
 }
 
-@media (max-width: 980px) {
-  .command-hero {
-    grid-template-columns: 1fr;
+@media (max-width: 720px) {
+  .command-controls {
+    justify-content: flex-start;
+  }
+
+  .command-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .command-feed li {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

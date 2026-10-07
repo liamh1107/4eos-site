@@ -6,6 +6,7 @@ import { PracticeBody } from "@/components/layout/PracticeBody";
 import { FaqList } from "@/components/seo/FaqList";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { services } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 import { breadcrumbSchema, faqSchema, graphSchema, serviceSchema } from "@/lib/schema";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const service = services.find((s) => s.slug === slug);
   if (!service) return {};
-  return { title: service.title, description: service.lede };
+  return withCanonical(`/services/${service.slug}`, { title: service.title, description: service.lede });
 }
 
 export default async function ServicePage({ params }: Props) {

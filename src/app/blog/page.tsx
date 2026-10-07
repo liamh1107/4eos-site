@@ -4,11 +4,12 @@ import { Page } from "@/components/layout/Page";
 import { BackLink } from "@/components/ui/BackLink";
 import { Breath, Sheet } from "@/components/layout/Sheet";
 import { getPosts } from "@/lib/posts";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/blog", {
   title: "Journal",
   description: "Notes on managed IT, security, and running a business in Fort Wayne.",
-};
+});
 
 export default function BlogIndex() {
   const posts = getPosts();

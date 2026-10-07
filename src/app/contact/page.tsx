@@ -5,11 +5,12 @@ import { Sheet } from "@/components/layout/Sheet";
 import { IntakeForm } from "@/components/forms/IntakeForm";
 import { addressLine, site } from "@/lib/site";
 import { hours, salesEmail } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/contact", {
   title: "Contact",
   description: `Request a free IT assessment. ${site.phone} · ${addressLine}.`,
-};
+});
 
 const routes = [
   { label: "Phone", value: site.phone, href: site.phoneHref },

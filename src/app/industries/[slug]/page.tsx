@@ -5,6 +5,7 @@ import { InnerPage } from "@/components/layout/InnerPage";
 import { FaqList } from "@/components/seo/FaqList";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { industries } from "@/lib/content";
+import { withCanonical } from "@/lib/metadata";
 import { breadcrumbSchema, faqSchema, graphSchema, industryPageSchema } from "@/lib/schema";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const industry = industries.find((i) => i.slug === slug);
   if (!industry) return {};
-  return { title: industry.title, description: industry.lede };
+  return withCanonical(`/industries/${industry.slug}`, { title: industry.title, description: industry.lede });
 }
 
 export default async function IndustryPage({ params }: Props) {

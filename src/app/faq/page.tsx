@@ -4,11 +4,12 @@ import { FaqList } from "@/components/seo/FaqList";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqs } from "@/lib/content";
 import { faqSchema, graphSchema } from "@/lib/schema";
+import { withCanonical } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withCanonical("/faq", {
   title: "FAQ",
   description: "Straight answers on choosing a provider, VoIP, outsourcing, and cybersecurity.",
-};
+});
 
 export default function FAQPage() {
   return (
