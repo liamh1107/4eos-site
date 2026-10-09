@@ -34,6 +34,7 @@ type Report = {
   journeys: { place: string; steps: string[] }[];
   support: { visits: number; unique: number; repeat: number; tickets: number; avgEngagementMs: number; sources: Pair[]; actions: Pair[] };
   leads: { total: number };
+  quiz: { starts: number; completions: number; completionRate: number; avgScore: number; categories: Pair[]; leads: number; leadRate: number };
   funnels: { name: string; steps: { label: string; count: number }[] }[];
   ai: {
     referrals: Pair[];
@@ -243,9 +244,9 @@ export function CommandRoom() {
             <article className="command-panel command-summary">
               <h2>{range === "day" ? "Today" : `This ${range}`}</h2>
               <dl>
-                <div><dt>Top industry</dt><dd>{current.score.topIndustry ?? "—"}</dd></div>
-                <div><dt>Top service</dt><dd>{current.score.topService ?? "—"}</dd></div>
-                <div><dt>Top source</dt><dd>{current.score.bestSource ?? "—"}</dd></div>
+                <div><dt>Top industry</dt><dd>{current.score.topIndustry ?? "None"}</dd></div>
+                <div><dt>Top service</dt><dd>{current.score.topService ?? "None"}</dd></div>
+                <div><dt>Top source</dt><dd>{current.score.bestSource ?? "None"}</dd></div>
                 <div><dt>Most viewed</dt><dd>{pageLabel(current.pages[0]?.path)}</dd></div>
               </dl>
             </article>
@@ -351,6 +352,22 @@ export function CommandRoom() {
             <p className="command-note">Support tracking is on. No support visits in this period.</p>
           )}
 
+          {current.quiz.starts > 0 ? (
+            <Panel title="Risk quiz">
+              <dl>
+                <div><dt>Started</dt><dd>{current.quiz.starts}</dd></div>
+                <div><dt>Completed</dt><dd>{current.quiz.completions}</dd></div>
+                <div><dt>Completion</dt><dd>{current.quiz.completionRate}%</dd></div>
+                <div><dt>Average score</dt><dd>{current.quiz.completions ? `${current.quiz.avgScore} / 100` : "None"}</dd></div>
+                <div><dt>Leads</dt><dd>{current.quiz.leads}</dd></div>
+                <div><dt>Lead rate</dt><dd>{current.quiz.leadRate}%</dd></div>
+              </dl>
+              <Bars rows={current.quiz.categories.filter((row) => row.count > 0)} empty="No completed quizzes in this period." />
+            </Panel>
+          ) : (
+            <p className="command-note">Risk quiz tracking is on. No quiz starts in this period.</p>
+          )}
+
           {leads > 0 ? (
             <Panel title="Lead sources">
               <Bars rows={current.leadSources} empty="No lead source recorded in this period." />
@@ -451,7 +468,7 @@ export function CommandRoom() {
                     <thead><tr><th>Organization</th><th>Visits</th><th>Location</th></tr></thead>
                     <tbody>
                       {current.companies.map((row) => (
-                        <tr key={row.org_name}><td>{row.org_name}</td><td>{row.visits}</td><td>{row.location || "—"}</td></tr>
+                        <tr key={row.org_name}><td>{row.org_name}</td><td>{row.visits}</td><td>{row.location || "None"}</td></tr>
                       ))}
                     </tbody>
                   </table>
@@ -541,7 +558,7 @@ function Delta({ value }: { value: number | null }) {
 }
 
 function pageLabel(path: string | undefined) {
-  if (!path) return "—";
+  if (!path) return "None";
   const names: Record<string, string> = {
     "/": "Homepage",
     "/services/completecare": "CompleteCare",
@@ -549,6 +566,7 @@ function pageLabel(path: string | undefined) {
     "/secureai": "SecureAI",
     "/support": "Support",
     "/contact": "Contact",
+    "/assessment": "Risk quiz",
   };
   return names[path] ?? path;
 }

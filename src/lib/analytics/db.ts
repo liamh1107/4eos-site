@@ -71,6 +71,21 @@ CREATE INDEX IF NOT EXISTS sessions_started ON sessions (started_at);
 CREATE INDEX IF NOT EXISTS events_at ON events (at);
 `;
 
+const MIGRATION_003 = `
+CREATE TABLE IF NOT EXISTS quiz_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  at INTEGER NOT NULL,
+  session_id TEXT,
+  visitor_id TEXT,
+  score INTEGER NOT NULL,
+  category TEXT NOT NULL,
+  areas TEXT,
+  lead INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS quiz_results_at ON quiz_results (at);
+CREATE INDEX IF NOT EXISTS quiz_results_session ON quiz_results (session_id);
+`;
+
 let db: DatabaseSync | null = null;
 
 export function analyticsDb() {
@@ -92,6 +107,11 @@ export function analyticsDb() {
   const placed = db.prepare("SELECT id FROM schema_migrations WHERE id = ?").get("002") as { id: string } | undefined;
   if (!placed) {
     db.prepare("INSERT INTO schema_migrations (id, applied_at) VALUES (?, ?)").run("002", Date.now());
+  }
+  db.exec(MIGRATION_003);
+  const quiz = db.prepare("SELECT id FROM schema_migrations WHERE id = ?").get("003") as { id: string } | undefined;
+  if (!quiz) {
+    db.prepare("INSERT INTO schema_migrations (id, applied_at) VALUES (?, ?)").run("003", Date.now());
   }
   maintain(db);
   return db;
@@ -119,6 +139,7 @@ function maintain(database: DatabaseSync) {
   database.prepare("DELETE FROM sessions WHERE last_seen < ?").run(cutoff);
   database.prepare("DELETE FROM visitors WHERE last_seen < ?").run(cutoff);
   database.prepare("DELETE FROM companies WHERE last_seen < ?").run(cutoff);
+  database.prepare("DELETE FROM quiz_results WHERE at < ?").run(cutoff);
   mkdirSync(BACKUP_DIR, { recursive: true });
   const dest = path.join(BACKUP_DIR, `analytics-${today}.db`);
   if (!existsSync(dest)) {

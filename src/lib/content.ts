@@ -13,7 +13,7 @@ export const services = [
     slug: "completecare",
     title: "CompleteCare Managed IT",
     statement: "We run your IT so the team can stay on the work.",
-    lede: "Proactive management, continuous monitoring, and live U.S.-based support. Problems are prevented rather than waited for.",
+    lede: "Proactive management, continuous monitoring, and live U.S.-based support. We catch problems before someone has to open a ticket.",
     phase: "ownership" as const,
     points: [
       "Help desk through fully managed infrastructure",
@@ -36,7 +36,7 @@ export const services = [
       },
       {
         q: "How does CompleteCare handle problems?",
-        a: "Continuous monitoring, not a wait for tickets. Problems are prevented rather than waited for. Eyes On Site covers the work that needs someone in the room, and support is remote-first for faster resolution.",
+        a: "Continuous monitoring, so problems surface before a ticket. Eyes On Site covers the work that needs someone in the room, and support is remote-first for faster resolution.",
       },
     ],
   },
@@ -114,7 +114,7 @@ export const services = [
       "End-user training included",
     ],
     how: [
-      "Midwest VoIP — one family, one number to call",
+      "Midwest VoIP, one family and one number to call",
       "Porting, routing, queues, and ring groups",
       "Training included so the team actually uses it",
     ],
@@ -266,13 +266,13 @@ export const industries = [
     slug: "insurance",
     title: "Insurance",
     statement: "Agency systems stay up when the office needs them.",
-    offer: "Agency systems, client data, and PCI-aligned payments.",
+    offer: "Agency systems, client data, and payments in line with PCI.",
     lede: "We keep the agency management system available for producers, protect the client data in it, and handle payments in line with PCI.",
     note: "We keep the agency system up for producers, protect the client data in it, and handle payments in line with PCI.",
     how: [
       "Agency management systems kept available for producers",
       "Client data protected in the systems the office runs on",
-      "Payment handling aligned with PCI",
+      "Payment handling in line with PCI",
       "Secure access for producers working out of the office",
       "Monitoring and a help desk that treat the agency system as the business",
     ],
@@ -412,7 +412,7 @@ export const industries = [
 export const faqs = [
   {
     q: "How do I choose a managed IT provider?",
-    a: "Look for a partner that aligns technology with the business rather than waiting for tickets. Ask about response times and SLAs, cybersecurity, proactive monitoring, industry experience, local and remote support, and whether they do strategic planning or only break-fix.",
+    a: "Ask how they connect the technology to the work, and how fast they close tickets. Ask about response times and SLAs, cybersecurity, monitoring, industry experience, local and remote support, and whether they plan ahead or only fix what is already broken.",
   },
   {
     q: "What should a business VoIP system include?",
@@ -443,7 +443,7 @@ export const values = [
   },
   {
     title: "Client success",
-    lede: "A relentless commitment to outcomes. We do not just support the IT. We help you lead with it.",
+    lede: "We support the IT, and we sit in on the decisions that depend on it.",
   },
 ] as const;
 

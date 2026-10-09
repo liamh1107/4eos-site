@@ -60,7 +60,7 @@ export function PracticeBody({
           ))}
         </ul>
       ) : null}
-      <Link href="/contact" className="bar-btn bar-btn-line mt-10 inline-flex">
+      <Link href="/assessment" className="bar-btn bar-btn-line mt-10 inline-flex">
         Request an assessment <span aria-hidden>→</span>
       </Link>
     </>

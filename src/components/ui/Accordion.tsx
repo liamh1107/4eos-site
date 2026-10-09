@@ -5,7 +5,7 @@ import { useId, useState, type ReactNode } from "react";
 export type AccordionItem = {
   id: string;
   index?: string;
-  title: string;
+  title: ReactNode;
   statement?: ReactNode;
   children: ReactNode;
 };

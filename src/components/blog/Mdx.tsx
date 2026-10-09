@@ -18,7 +18,7 @@ const components = {
   li: (props: { children?: ReactNode }) => (
     <li className="flex gap-4 text-[15px] tracking-tight">
       <span className="micro text-fg-faint" aria-hidden>
-        —
+        ·
       </span>
       <span>{props.children}</span>
     </li>

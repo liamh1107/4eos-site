@@ -40,6 +40,7 @@ export function llmsTxt() {
     link("Why 4EOS", "/why-4eos"),
     link("FAQ", "/faq"),
     link("Contact", "/contact"),
+    link("IT Risk Quiz", "/assessment", "A twelve-question self-check with a risk score."),
     link("Support", "/support"),
     link("Journal", "/blog"),
     "",

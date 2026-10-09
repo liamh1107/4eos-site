@@ -7,7 +7,7 @@ export function isIgnoredPath(path: string) {
   );
 }
 
-export type ContentKind = "service" | "industry" | "support" | "contact" | "page";
+export type ContentKind = "service" | "industry" | "support" | "contact" | "assessment" | "page";
 
 const SERVICES: Record<string, string> = {
   "/services/completecare": "CompleteCare",
@@ -35,6 +35,7 @@ export function contentOf(path: string): { kind: ContentKind; label: string } | 
   if (path === "/industries") return { kind: "industry", label: "Industries" };
   if (path === "/support" || path.startsWith("/support/")) return { kind: "support", label: "Support" };
   if (path === "/contact") return { kind: "contact", label: "Contact" };
+  if (path === "/assessment") return { kind: "assessment", label: "Risk quiz" };
   return null;
 }
 

@@ -35,14 +35,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Managed IT, Cybersecurity and Compliance in Fort Wayne`,
-    template: `%s — ${site.name}`,
+    default: `${site.name} | Managed IT, cybersecurity, and compliance in Fort Wayne`,
+    template: `%s | ${site.name}`,
   },
   description: site.description,
   openGraph: {
     type: "website",
     siteName: site.name,
-    title: `${site.name} — Modern IT Leadership for Growing Businesses`,
+    title: `${site.name} | Managed IT, cybersecurity, and compliance in Fort Wayne`,
     description: site.description,
     locale: "en_US",
   },

@@ -31,7 +31,7 @@ export default function WhyPage() {
       phase="discovery"
       kicker={`Fort Wayne · ${site.founded}`}
       title="A partner, not a vendor."
-      lede="We do not just manage the IT. We take ownership of it. Local support is not a promise in an ad. It is how the work has been done for over two decades."
+      lede="We take ownership of the IT. Local support is how the work has been done here for over two decades."
     >
       <ul className="divide-y divide-hairline border-y border-hairline">
         {claims.map((c) => (

@@ -36,6 +36,7 @@ export async function POST(request: Request) {
         engagementMs: typeof body.engagementMs === "number" ? body.engagementMs : undefined,
         scroll: typeof body.scroll === "number" ? body.scroll : undefined,
         detail: typeof body.detail === "string" ? body.detail : undefined,
+        score: typeof body.score === "number" ? body.score : undefined,
       },
       userAgent: request.headers.get("user-agent"),
       cookieHeader: request.headers.get("cookie"),

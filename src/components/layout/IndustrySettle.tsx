@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { detectTier, prefersReducedMotion } from "@/lib/env";
 import {
+  cubeZoomArmed,
+  disarmCubeZoom,
   setCloud,
   setFocus,
   setIntensity,
@@ -15,11 +17,16 @@ import {
  * The zoom through an industry face ends on black. The die is swapped for
  * the unmanaged cloud while that black is still held, then the dots fade in.
  * The die stays gone until the industries chapter is on screen again.
+ *
+ * Only a click on the homepage die arms this. Arriving from /industries,
+ * the nav, a search result, or a reload gets a plain cut to the cloud.
  */
 export function IndustrySettle() {
   useEffect(() => {
     const onCube = signal.rendered > 3.4 && signal.rendered < 4.6;
-    const skip = !onCube || detectTier() === "mobile" || prefersReducedMotion();
+    // Read, do not clear: dev strict mode runs this effect twice before the
+    // first frame, and the second run must see the same answer.
+    const skip = !onCube || !cubeZoomArmed() || detectTier() === "mobile" || prefersReducedMotion();
     if (skip) {
       setZoom(0);
       signal.zoomR = 0;
@@ -49,6 +56,8 @@ export function IndustrySettle() {
       signal.zoomR = 0;
       setFocus(null);
       snapPhase("unmanaged");
+      // One dive per click on the die.
+      disarmCubeZoom();
       signal.invalidate?.();
     };
 

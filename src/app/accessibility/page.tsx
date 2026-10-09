@@ -22,7 +22,7 @@ export default function AccessibilityPage() {
       <LegalSections
         sections={[
           {
-            heading: "Our commitment",
+            heading: "Intent",
             paragraphs: [
               "We intend for people to be able to perceive, operate, and understand this website, including with a keyboard, a screen reader, browser zoom, and their own text settings.",
             ],

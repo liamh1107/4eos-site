@@ -5,6 +5,15 @@ import { useEffect, useRef } from "react";
 
 type Net = { effectiveType?: string };
 
+/** Page context the Beacon learned on mount, shared with page-level events. */
+let context: Record<string, unknown> = {};
+
+/** Send a custom event from a page, with the same context as the Beacon's own events. */
+export function sendSignal(body: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+  send({ ...context, path: window.location.pathname, ...body });
+}
+
 function send(body: Record<string, unknown>) {
   const payload = JSON.stringify(body);
   if (navigator.sendBeacon) {
@@ -43,6 +52,7 @@ export function Beacon() {
     const connection = (navigator as Navigator & { connection?: Net }).connection?.effectiveType;
     const screen = `${window.screen.width}x${window.screen.height}`;
     const base = { path: pathname, screen, connection, ...acq };
+    context = base;
 
     send({ ...base, name: "page_view" });
     const started = Date.now();
@@ -68,6 +78,7 @@ export function Beacon() {
       if (href.startsWith("tel:")) detail = "tel";
       else if (href.startsWith("mailto:")) detail = "mailto";
       else if (href === "/contact" || href.startsWith("/contact?")) detail = "cta";
+      else if (href === "/assessment" || href.startsWith("/assessment?")) detail = "cta";
       else if (pathname === "/support") detail = "support";
       if (detail) send({ ...base, name: "click", detail });
     };

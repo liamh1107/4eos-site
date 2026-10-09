@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InnerPage } from "@/components/layout/InnerPage";
+import { AiCoreMount } from "@/components/secureai/AiCoreMount";
 import { withCanonical } from "@/lib/metadata";
 
 export const metadata: Metadata = withCanonical("/secureai", {
@@ -26,7 +27,7 @@ const points = [
   },
   {
     title: "The whole team",
-    lede: "Not just for power users. Easy onboarding, credits that reset monthly, no stacked per-user fees.",
+    lede: "Onboarding is straightforward, credits reset monthly, and there is no per-user fee stacked on top.",
   },
 ];
 
@@ -37,6 +38,8 @@ export default function SecureAIPage() {
       kicker="SecureAI"
       title="Give the whole team AI. Without the risk."
       lede="Sixty-plus models, including GPT-4 and Claude, on one secure platform. No individual subscriptions. No per-user fees stacking up month after month."
+      note="Models inside the perimeter. The data stays yours."
+      visual={<AiCoreMount />}
     >
       <ul className="divide-y divide-hairline border-y border-hairline">
         {points.map((p) => (

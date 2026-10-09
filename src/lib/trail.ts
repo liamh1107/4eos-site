@@ -48,7 +48,7 @@ export function currentSpot(): Spot {
     return { href: "/", label: "Home" };
   }
 
-  let label = document.title.replace(/\s+—\s+4EOS$/, "");
+  let label = document.title.replace(/\s+\|\s+4EOS$/, "");
   if (!label || label.startsWith("4EOS")) label = "Home";
   return { href: path, label };
 }

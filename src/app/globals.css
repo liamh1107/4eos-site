@@ -514,6 +514,68 @@ html.signal-live .signal-poster {
   }
 }
 
+/* Index pages: rows settle in one after another. Content only; the
+   field and camera stay where the page pinned them. */
+.reveal-rows > * {
+  animation: row-in 520ms var(--ease-out-quint) both;
+  animation-delay: calc(120ms + var(--row, 0) * 70ms);
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-rows > * {
+    animation: none;
+  }
+}
+
+/* SecureAI centerpiece. The poster is the first paint; the canvas fades
+   over it once it has drawn a frame. */
+.ai-core {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ai-core-poster,
+.ai-core-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 900ms var(--ease-out-quint);
+}
+
+.ai-core-canvas {
+  opacity: 0;
+}
+
+.ai-core[data-live="true"] .ai-core-canvas {
+  opacity: 1;
+}
+
+.ai-core[data-live="true"] .ai-core-poster {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-core-poster,
+  .ai-core-canvas {
+    transition: none;
+  }
+}
+
 /* Ascension-style still grain. Never animated; reduced-motion keeps it. */
 .film-grain {
   pointer-events: none;
@@ -583,6 +645,168 @@ html.signal-live .signal-poster {
   padding: 0.04em 0.16em;
   border-radius: 0.12em;
   background-color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------------
+   IT Risk Quiz — options, progress, and the scorecard
+------------------------------------------------------------------- */
+
+.quiz-card {
+  --quiz-tone: var(--color-gold);
+  max-width: 64rem;
+}
+
+.quiz-card[data-tone="low"] {
+  --quiz-tone: #7fbf8e;
+}
+
+.quiz-card[data-tone="moderate"] {
+  --quiz-tone: var(--color-gold);
+}
+
+.quiz-card[data-tone="elevated"] {
+  --quiz-tone: #f08a3c;
+}
+
+.quiz-card[data-tone="critical"] {
+  --quiz-tone: #ff3b2e;
+}
+
+.quiz-progress {
+  height: 2px;
+  background: var(--color-hairline);
+  overflow: hidden;
+}
+
+.quiz-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--color-gold);
+  transition: width 420ms var(--ease-out-quint);
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 3.25rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: 4px;
+  background: rgba(232, 228, 216, 0.06);
+  font-size: 15px;
+  letter-spacing: -0.011em;
+  cursor: pointer;
+  transition:
+    border-color 160ms var(--ease-out-quint),
+    background-color 160ms var(--ease-out-quint);
+}
+
+.quiz-option:hover {
+  border-color: var(--color-fg);
+}
+
+.quiz-option.is-checked {
+  border-color: var(--color-gold);
+  background: rgba(245, 183, 0, 0.08);
+}
+
+.quiz-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.quiz-dot {
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-hairline-strong);
+  transition:
+    border-color 160ms var(--ease-out-quint),
+    background-color 160ms var(--ease-out-quint);
+}
+
+.quiz-option.is-checked .quiz-dot {
+  border-color: var(--color-gold);
+  background: var(--color-gold);
+  box-shadow: 0 0 12px rgba(245, 183, 0, 0.5);
+}
+
+.quiz-ring {
+  position: relative;
+  width: clamp(9rem, 14vw, 12rem);
+  aspect-ratio: 1;
+}
+
+.quiz-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.quiz-ring-track,
+.quiz-ring-fill {
+  fill: none;
+  stroke-width: 6;
+}
+
+.quiz-ring-track {
+  stroke: var(--color-hairline-strong);
+}
+
+.quiz-ring-fill {
+  stroke: var(--quiz-tone);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px color-mix(in oklab, var(--quiz-tone) 60%, transparent));
+  transition: stroke-dashoffset 1100ms var(--ease-out-quint);
+}
+
+.quiz-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.quiz-category {
+  color: var(--quiz-tone);
+}
+
+.quiz-bar {
+  height: 3px;
+  background: var(--color-hairline);
+  overflow: hidden;
+}
+
+.quiz-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-gold);
+  transition: width 900ms var(--ease-out-quint);
+}
+
+.quiz-bar > span[data-tone="low"] {
+  background: #7fbf8e;
+}
+
+.quiz-bar > span[data-tone="elevated"] {
+  background: #f08a3c;
+}
+
+.quiz-bar > span[data-tone="critical"] {
+  background: #ff3b2e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-progress > span,
+  .quiz-ring-fill,
+  .quiz-bar > span {
+    transition: none;
+  }
 }
 
 .back-link {

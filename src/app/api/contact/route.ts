@@ -18,6 +18,8 @@ type Payload = {
   company_url?: string;
   topic?: string;
   intent?: "assessment" | "support";
+  /** "quiz" when the request came from the risk quiz result card. */
+  detail?: string;
 };
 
 export async function POST(request: Request) {
@@ -84,7 +86,7 @@ export async function POST(request: Request) {
       from,
       to,
       replyTo: email,
-      subject: `${intent} — ${name}`,
+      subject: `${intent}: ${name}`,
       text,
     });
     emailOk = !error;
@@ -103,7 +105,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    recordFormLead(support ? "support" : "assessment", request.headers.get("cookie"));
+    const kind = support ? "support" : body.detail === "quiz" ? "quiz" : "assessment";
+    recordFormLead(kind, request.headers.get("cookie"));
   } catch (error) {
     console.error("[signal]", error);
   }

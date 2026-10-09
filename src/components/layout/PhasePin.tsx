@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { type Phase } from "@/components/signal/formations";
-import { signal, snapPhase } from "@/components/signal/store";
+import { cubeZoomArmed, signal, snapPhase } from "@/components/signal/store";
 
 /** Pins the persistent field to this page's formation on mount and change. */
 export function PhasePin({
@@ -15,7 +15,7 @@ export function PhasePin({
 }) {
   useEffect(() => {
     const onCube = signal.rendered > 3.4 && signal.rendered < 4.6;
-    if (settleFromCube && onCube) return;
+    if (settleFromCube && onCube && cubeZoomArmed()) return;
     snapPhase(phase);
   }, [phase, settleFromCube]);
 

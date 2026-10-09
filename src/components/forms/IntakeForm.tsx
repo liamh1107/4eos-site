@@ -28,10 +28,18 @@ export function IntakeForm({
   endpoint,
   intent,
   submitLabel = "Send",
+  topic,
+  detail,
+  messageLabel,
 }: {
   endpoint: "/api/contact" | "/api/support";
   intent: "assessment" | "support";
   submitLabel?: string;
+  /** Short context that is prepended to the ticket, such as a quiz result. */
+  topic?: string;
+  /** Lead source recorded in analytics. Defaults to the intent. */
+  detail?: "quiz";
+  messageLabel?: string;
 }) {
   const [fields, setFields] = useState<Fields>(EMPTY);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
@@ -64,7 +72,7 @@ export function IntakeForm({
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...fields, intent }),
+        body: JSON.stringify({ ...fields, intent, ...(topic ? { topic } : {}), ...(detail ? { detail } : {}) }),
       });
       if (!res.ok) throw new Error("send failed");
       const data = (await res.json().catch(() => null)) as { ticketId?: unknown } | null;
@@ -115,7 +123,7 @@ export function IntakeForm({
         onChange={(v) => update("phone", v)}
       />
       <Field
-        label={intent === "support" ? "What is happening" : "What should we know"}
+        label={messageLabel ?? (intent === "support" ? "What is happening" : "What should we know")}
         name="message"
         value={fields.message}
         onChange={(v) => update("message", v)}

@@ -6,6 +6,7 @@ import { lookupOrganization } from "./enrich";
 import { cleanPath, isIgnoredPath } from "./paths";
 import { placeFromAddress } from "./geo";
 import { cleanConnection, cleanScreen, parseAgent } from "./ua";
+import { isQuizCategory } from "@/lib/quiz";
 
 const SESSION_MS = 30 * 60 * 1000;
 const VISITOR_COOKIE = "eos_vid";
@@ -25,10 +26,16 @@ export type SignalBody = {
   engagementMs?: number;
   scroll?: number;
   detail?: string;
+  /** Risk quiz score, 0..100, sent with quiz_complete. */
+  score?: number;
 };
 
+export type LeadKind = "assessment" | "support" | "quiz";
+
 const CLICKS = new Set(["tel", "mailto", "cta", "support"]);
-const FORMS = new Set(["assessment", "support"]);
+const FORMS = new Set<string>(["assessment", "support", "quiz"]);
+const EVENTS = new Set(["page_view", "heartbeat", "scroll", "click", "form_submit", "quiz_start", "quiz_complete"]);
+const LEAD_PATH: Record<LeadKind, string> = { assessment: "/contact", support: "/support", quiz: "/assessment" };
 
 export function readIds(cookieHeader: string | null) {
   const jar = parseCookies(cookieHeader);
@@ -59,7 +66,7 @@ export async function recordSignal(input: {
   }
 
   const name = input.body.name;
-  if (name !== "page_view" && name !== "heartbeat" && name !== "scroll" && name !== "click" && name !== "form_submit") {
+  if (!name || !EVENTS.has(name)) {
     return { ignored: true as const };
   }
 
@@ -167,6 +174,13 @@ export async function recordSignal(input: {
     ).run(now, sessionId, visitorId, name, path, detail);
   }
 
+  if (name === "quiz_complete" && detail) {
+    const score = clamp(input.body.score, 0, 100);
+    db.prepare(
+      "INSERT INTO quiz_results (at, session_id, visitor_id, score, category, areas, lead) VALUES (?, ?, ?, ?, ?, NULL, 0)",
+    ).run(now, sessionId, visitorId, score, detail);
+  }
+
   db.prepare("UPDATE visitors SET last_seen = ? WHERE id = ?").run(now, visitorId);
 
   if (name === "page_view") void rememberCompany(visitorId, path, now);
@@ -180,7 +194,7 @@ export async function recordSignal(input: {
   };
 }
 
-export function recordFormLead(kind: "assessment" | "support", cookieHeader: string | null) {
+export function recordFormLead(kind: LeadKind, cookieHeader: string | null) {
   const ids = readIds(cookieHeader);
   if (!validId(ids.visitorId) || !validId(ids.sessionId)) return;
   const now = Date.now();
@@ -192,7 +206,15 @@ export function recordFormLead(kind: "assessment" | "support", cookieHeader: str
   db.prepare("UPDATE sessions SET lead = 1, last_seen = ? WHERE id = ?").run(now, ids.sessionId);
   db.prepare(
     "INSERT INTO events (at, session_id, visitor_id, name, path, detail, kind) VALUES (?, ?, ?, 'form_submit', ?, ?, 'visitor')",
-  ).run(now, ids.sessionId, ids.visitorId, kind === "support" ? "/support" : "/contact", kind);
+  ).run(now, ids.sessionId, ids.visitorId, LEAD_PATH[kind], kind);
+  if (kind === "quiz") {
+    // The most recent result in this session is the one the request came from.
+    db.prepare(
+      `UPDATE quiz_results SET lead = 1 WHERE id = (
+        SELECT id FROM quiz_results WHERE session_id = ? ORDER BY at DESC LIMIT 1
+      )`,
+    ).run(ids.sessionId);
+  }
 }
 
 async function rememberCompany(_visitorId: string, page: string, now: number) {
@@ -223,6 +245,7 @@ function cleanDetail(name: string, detail: string | undefined) {
   if (!detail) return null;
   if (name === "click" && CLICKS.has(detail)) return detail;
   if (name === "form_submit" && FORMS.has(detail)) return detail;
+  if (name === "quiz_complete" && isQuizCategory(detail)) return detail;
   if (name === "crawl") return detail.slice(0, 40);
   return null;
 }

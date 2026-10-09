@@ -6,6 +6,7 @@ import { SignalBackdrop } from "@/components/signal/SignalBackdrop";
 import { SignalChapter } from "@/components/signal/SignalChapter";
 import { PHASE_INDEX } from "@/components/signal/formations";
 import {
+  disarmCubeZoom,
   getChapterIndex,
   getFocus,
   releasePhaseHold,
@@ -27,6 +28,7 @@ import { SnapTarget } from "@/components/motion/SnapTarget";
 import { registerSnapEl } from "@/lib/snap";
 import { Accordion } from "@/components/ui/Accordion";
 import { PhaseLink } from "@/components/ui/PhaseLink";
+import { ServiceTitle } from "@/components/ui/ServiceTitle";
 import { industries, services, tiers } from "@/lib/content";
 import { site } from "@/lib/site";
 
@@ -37,6 +39,7 @@ const CHAPTER =
 export function HomeView() {
   useEffect(() => {
     releasePhaseHold();
+    disarmCubeZoom();
     setCloud(0, true);
     setZoom(0);
     signal.zoomR = 0;
@@ -87,13 +90,11 @@ function Hero() {
           <span className="field-copy">Fort Wayne · Since {site.founded}</span>
         </p>
         <h1 className="display hero-display mt-[clamp(0.75rem,2vh,1.5rem)]">
-          Modern IT
+          Managed IT
           <br />
-          leadership
+          for Indiana
           <br />
           <span className="text-gold">
-            for growing
-            <br />
             businesses
           </span>
         </h1>
@@ -121,7 +122,7 @@ function Discovery() {
           <p className="lede mt-6 max-w-[42ch]">
             <span className="field-copy">
               We start by seeing what is actually there. Then the field resolves
-              onto a lattice — the same endpoints, finally accounted for.
+              onto a lattice. The same endpoints, finally accounted for.
             </span>
           </p>
       </section>
@@ -164,8 +165,9 @@ function Ownership() {
           </h2>
           <p className="lede mt-4 shrink-0">
             <span className="field-copy">
-              More than a help desk. Proactive management, continuous
-              monitoring, and live U.S.-based support, in three levels.
+              Help desk through fully managed infrastructure. Proactive
+              management, continuous monitoring, and live U.S.-based support,
+              in three levels.
             </span>
           </p>
           <div className="phone-list-glass mt-6 min-h-0">
@@ -273,6 +275,7 @@ function Industries() {
                     href={`/industries/${ind.slug}`}
                     phase="industries"
                     focus={i}
+                    armZoom
                     className="flex h-full w-full flex-col justify-center py-[clamp(0.2rem,0.6vh,0.45rem)] transition-colors hover:text-gold"
                   >
                     <span className="flex items-baseline gap-[3vw]">
@@ -311,8 +314,8 @@ function Response() {
           <p className="lede mt-6 max-w-[42ch]">
             <span className="field-copy">
               Continuous monitoring. Live U.S.-based support. Eyes On Site
-              when the work still needs someone in the room. Existing client
-              with an issue — the help desk picks it up.
+              when the work still needs someone in the room. An existing client
+              with an issue goes to the help desk.
             </span>
           </p>
           <div className="chapter-phone-actions mt-8 flex flex-wrap gap-8">
@@ -363,7 +366,7 @@ function Strategy() {
         id: s.slug,
         index: String(i + 1).padStart(2, "0"),
         title: s.title,
-        statement: s.statement,
+        statement: <ServiceTitle title={s.statement} />,
         children: (
           <>
             <p className="body-sm">{s.lede}</p>

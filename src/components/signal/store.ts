@@ -205,6 +205,29 @@ export function setZoom(value: number) {
   signal.invalidate?.();
 }
 
+/**
+ * The dive through an industry face belongs to the homepage die alone.
+ * A click on one of its faces arms the zoom for the next industry page;
+ * every other way onto that page gets a plain cut. The window is short so
+ * a press that never navigates cannot arm a later visit.
+ */
+const CUBE_ARM_MS = 3000;
+let cubeArmedAt = 0;
+
+export function armCubeZoom() {
+  cubeArmedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
+}
+
+export function disarmCubeZoom() {
+  cubeArmedAt = 0;
+}
+
+export function cubeZoomArmed() {
+  if (!cubeArmedAt) return false;
+  const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+  return now - cubeArmedAt < CUBE_ARM_MS;
+}
+
 /** Blend the live field straight to the unmanaged cloud. `immediate` skips the ease. */
 export function setCloud(value: number, immediate = false) {
   signal.cloud = value > 0.5 ? 1 : 0;

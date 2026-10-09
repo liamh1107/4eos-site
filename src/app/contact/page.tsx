@@ -32,8 +32,8 @@ export default function ContactPage() {
               Tell us about the environment.
             </h1>
             <p className="lede mt-8">
-              A senior engineer, not a salesperson, follows up. Existing client
-              with an issue — use Support.
+              A senior engineer follows up, not a salesperson. An existing client
+              with an issue should use Support.
             </p>
             <ul className="mt-12">
               {routes.map((r) => (

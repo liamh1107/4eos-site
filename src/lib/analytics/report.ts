@@ -1,6 +1,7 @@
 import { analyticsDb } from "./db";
 import { companyLookupEnabled } from "./enrich";
 import { contentOf } from "./paths";
+import { QUIZ_CATEGORIES } from "@/lib/quiz";
 
 export type RangeKey = "day" | "week" | "month" | "quarter" | "year";
 
@@ -140,6 +141,7 @@ export function buildReport(key: RangeKey) {
     journeys: journeys(sessions),
     support: supportReport(sessions, from, to),
     leads: leadReport(from, to, sessions.length),
+    quiz: quizReport(from, to),
     funnels: funnels(sessions),
     ai: aiReport(from, to),
     companies: companyReport(),
@@ -455,6 +457,7 @@ export function pageName(path: string) {
     "/industries/private-equity": "Private Equity",
     "/support": "Support",
     "/contact": "Contact",
+    "/assessment": "Risk quiz",
     "/about": "About",
     "/why-4eos": "Why 4EOS",
     "/faq": "FAQ",
@@ -519,13 +522,15 @@ function leadReport(from: number, to: number, sessions: number) {
   const pick = (name: string, detail: string) => rows.find((row) => row.name === name && row.detail === detail)?.n ?? 0;
   const assessment = pick("form_submit", "assessment");
   const support = pick("form_submit", "support");
+  const quiz = pick("form_submit", "quiz");
   const phone = pick("click", "tel");
   const email = pick("click", "mailto");
   const cta = pick("click", "cta");
-  const total = assessment + support + phone + email;
+  const total = assessment + support + quiz + phone + email;
   return {
     assessment,
     support,
+    quiz,
     phone,
     email,
     cta,
@@ -534,10 +539,43 @@ function leadReport(from: number, to: number, sessions: number) {
   };
 }
 
+/** Risk quiz: how many started, finished, where they landed, and who asked for more. */
+function quizReport(from: number, to: number) {
+  const db = analyticsDb();
+  const events = db
+    .prepare(
+      `SELECT name, COUNT(*) AS n FROM events
+       WHERE kind = 'visitor' AND at >= ? AND at < ? AND name IN ('quiz_start', 'quiz_complete')
+       GROUP BY name`,
+    )
+    .all(from, to) as { name: string; n: number }[];
+  const starts = events.find((row) => row.name === "quiz_start")?.n ?? 0;
+  const completions = events.find((row) => row.name === "quiz_complete")?.n ?? 0;
+  const results = db
+    .prepare(`SELECT score, category, lead FROM quiz_results WHERE at >= ? AND at < ?`)
+    .all(from, to) as { score: number; category: string; lead: number }[];
+  const avgScore = results.length ? Math.round(results.reduce((sum, row) => sum + row.score, 0) / results.length) : 0;
+  const leads = results.filter((row) => row.lead === 1).length;
+  const categories = QUIZ_CATEGORIES.map((label) => ({
+    label,
+    count: results.filter((row) => row.category === label).length,
+  }));
+  return {
+    starts,
+    completions,
+    completionRate: starts ? round1((completions / starts) * 100) : 0,
+    avgScore,
+    categories,
+    leads,
+    leadRate: completions ? round1((leads / completions) * 100) : 0,
+  };
+}
+
 function funnels(sessions: SessionRow[]) {
   const defs = [
     { name: "Industry, then service, then contact", test: [/\/industries\/[^/]+/, /\/services\/[^/]+|\/secureai/, /\/contact/] },
     { name: "Service, then contact", test: [/\/services\/[^/]+|\/secureai/, /\/contact/] },
+    { name: "Service, then the risk quiz", test: [/\/services\/[^/]+|\/secureai/, /\/assessment/] },
     { name: "Support, then a service", test: [/\/support/, /\/services\/[^/]+|\/secureai/] },
   ];
   return defs.map((def) => {
@@ -567,6 +605,7 @@ function labelFor(pattern: RegExp) {
   if (source.includes("industries")) return "Industry";
   if (source.includes("support")) return "Support";
   if (source.includes("contact")) return "Contact";
+  if (source.includes("assessment")) return "Risk quiz";
   return "Service";
 }
 
@@ -650,8 +689,8 @@ function monthCards() {
       label: new Date(start).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" }),
       visitors: sessions.length,
       leads,
-      topIndustry: industries[0]?.label ?? "—",
-      topService: services[0]?.label ?? "—",
+      topIndustry: industries[0]?.label ?? "None",
+      topService: services[0]?.label ?? "None",
     });
   }
   return cards;

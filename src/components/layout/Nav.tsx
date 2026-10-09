@@ -178,7 +178,7 @@ export function Nav({ tone = "light" }: { tone?: "light" | "dark" }) {
               Request Support
             </Link>
             <Link
-              href="/contact"
+              href="/assessment"
               className="bar-btn bar-btn-line hidden min-[900px]:inline-flex"
             >
               Free IT Assessment
@@ -231,7 +231,7 @@ export function Nav({ tone = "light" }: { tone?: "light" | "dark" }) {
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="micro transition-colors hover:text-gold">
+              <Link href="/assessment" className="micro transition-colors hover:text-gold">
                 Free IT Assessment
               </Link>
             </li>

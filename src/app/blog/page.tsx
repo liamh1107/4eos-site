@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Page } from "@/components/layout/Page";
 import { BackLink } from "@/components/ui/BackLink";
-import { Breath, Sheet } from "@/components/layout/Sheet";
+import { Sheet } from "@/components/layout/Sheet";
 import { getPosts } from "@/lib/posts";
 import { withCanonical } from "@/lib/metadata";
 
@@ -16,7 +16,7 @@ export default function BlogIndex() {
 
   return (
     <Page phase="discovery">
-      <section className="px-[var(--sheet-inset)] pb-10 pt-[6vh]">
+      <section className="px-[var(--sheet-inset)] pb-8 pt-[6vh]">
         <BackLink href="/" label="Home" />
         <p className="micro mt-6 text-fg-muted">
           <span className="field-copy">Journal</span>
@@ -25,7 +25,6 @@ export default function BlogIndex() {
           Notes from the work.
         </h1>
       </section>
-      <Breath size="md" />
       <Sheet tone="ink">
         <ol className="sheet-pad divide-y divide-hairline py-4">
           {posts.map((post) => (
